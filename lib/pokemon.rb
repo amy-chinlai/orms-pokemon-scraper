@@ -11,12 +11,12 @@ class Pokemon
     end
 
     def self.save(name, type, db)
-      sql = <<-SQL
-        INSERT INTO pokemon (name, type)
-        VALUES (?, ?)
-      SQL
-        DB[:conn].execute(sql, self.name, self.type)
-        @id = DB[:conn].execute("SELECT last_insert_rowid() FROM pokemon")[0][0]
+        db.execute("INSERT INTO pokemon (name, type) VALUES (?, ?)", name, type)
+        @id = db.execute("SELECT last_insert_rowid() FROM pokemon")[0][0]
     end
 
+    def self.find(id, db)
+        array = db.execute("SELECT * FROM pokemon WHERE id = ?", id)
+        self.new(id: array[0][0], name: array[0][1], type: array[0][2], db: db)
+    end
 end
